@@ -1,5 +1,7 @@
 import numpy as np
 from matplotlib import pyplot as plt
+from scipy.signal import find_peaks
+
 
 def sig_div(f, duration, sr, alph):
     t = np.arange(0,duration, 1/sr)
@@ -30,7 +32,7 @@ def correlation_time(x,y):
     return np.abs(np.sum(x * np.conj(y))) / np.sqrt( np.sum(np.abs(x)**2) * np.sum(np.abs(y)**2))
 
 
-def plot_and_save(name, x, y):
+def plot_and_save1(x, y):
 
     plt.plot(x, y, 'b')
     plt.plot(x, y, 'rx')
@@ -44,13 +46,42 @@ def plot_and_save(name, x, y):
                 textcoords="offset points", # how to position the text
                 bbox=dict(boxstyle='round', fc='gray', alpha=0.1),
                 xytext=(0,10),
-                fontsize = 7,
+                # fontsize = 7,
                 ha='center') # horizontal alignment can be left, right or center
 
     plt.ylim([0.57, 1.05])
     plt.xlabel("Frequency ratio")
     plt.ylabel("Normalized covariance")
-    plt.savefig("figs/" + name, dpi=300, bbox_inches='tight')
+    plt.savefig("figs/fig1.pdf", dpi=300, bbox_inches='tight')
+
+    plt.show()
+    
+    pass
+
+
+def plot_and_save2(x, y):
+
+    plt.plot(x, y, 'b')
+
+    peaks, _ = find_peaks(y, distance=20)
+    plt.plot(x[peaks], y[peaks], 'rx')
+    for xs,ys in zip(x[peaks],y[peaks]):
+
+        labely = "{:.3f}".format(ys)
+        label = labely.replace('.',',')
+
+        if float(labely) >= 0.59:
+            plt.annotate(label, (xs,ys), # these are the coordinates to position the label
+                textcoords="offset points", # how to position the text
+                bbox=dict(boxstyle='round', fc='gray', alpha=0.1),
+                xytext=(0,10),
+                # fontsize = 7,
+                ha='center') # horizontal alignment can be left, right or cente
+
+    plt.ylim([0.57, 1.05])
+    plt.xlabel("Frequency ratio")
+    plt.ylabel("Normalized covariance")
+    plt.savefig("figs/fig2.pdf", dpi=300, bbox_inches='tight')
 
     plt.show()
     
